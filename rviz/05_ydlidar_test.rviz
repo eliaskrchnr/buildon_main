@@ -7,7 +7,8 @@ Panels:
         - /Global Options1
         - /Status1
         - /Grid1
-        - /LaserScan1/Status1
+        - /LaserScan1
+        - /Axes1
       Splitter Ratio: 0.5
     Tree Height: 549
   - Class: rviz/Selection
@@ -27,7 +28,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -74,7 +75,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.05000000074505806
+      Size (m): 0.029999999329447746
       Style: Flat Squares
       Topic: /scan
       Unreliable: false
@@ -84,9 +85,9 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz/Axes
       Enabled: true
-      Length: 1
+      Length: 0.800000011920929
       Name: Axes
-      Radius: 0.10000000149011612
+      Radius: 0.05000000074505806
       Reference Frame: <Fixed Frame>
       Show Trail: false
       Value: true
@@ -134,9 +135,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9553978443145752
+      Pitch: 0.8003979921340942
       Target Frame: <Fixed Frame>
-      Yaw: 3.0554001331329346
+      Yaw: 3.0403990745544434
     Saved: ~
 Window Geometry:
   Displays:
@@ -154,5 +155,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 60
-  Y: 23
+  X: 144
+  Y: 54
