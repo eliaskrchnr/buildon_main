@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="worlds/shapes.world"/>
+  </include>
+  <param name="robot_description" command="cat $(find buildon_main)/urdf/olaf.urdf" />
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-param robot_description -urdf -x -2 -model Olaf" />
+</launch>

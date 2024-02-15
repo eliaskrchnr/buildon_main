@@ -1,0 +1,5 @@
+<launch>
+    <arg name="rvizconfig" default="$(find buildon_main)/rviz/05_ydlidar_test.rviz" />
+    <include file="$(find ydlidar_ros_driver)/launch/X4-Pro.launch" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+</launch>

@@ -1,0 +1,16 @@
+01_olaf_to_rviz:
+- Zeigt das Roboter Model in Rviz 
+
+
+02_olaf_to_gazebo.launch
+- Zeigt Roboter in Gazebo 
+
+03:
+startet roboter mit rviz, gazebo und steering inclusive lidar und visualisierung
+    INFO: 
+        - Terminal zeigt Warnungen an: TF_REPEATED_DATA 
+        - laut ROS ist das ein nicht gefixter Bug --> https://github.com/ros/geometry2/issues/467
+        - Warnung kann stummgeschaltet werden mit: roslaunch buildon_main 03_olaf_sim_control.launch 2> >(grep -v TF_REPEATED_DATA buffer_core)
+
+04: Mapping
+    - roslaunch buildon_main 04_mapping.launch  2> >(grep -v TF_REPEATED_DATA buffer_core)
