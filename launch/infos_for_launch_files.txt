@@ -14,3 +14,5 @@ startet roboter mit rviz, gazebo und steering inclusive lidar und visualisierung
 
 04: Mapping
     - roslaunch buildon_main 04_mapping.launch  2> >(grep -v TF_REPEATED_DATA buffer_core)
+
+07:

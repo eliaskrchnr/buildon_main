@@ -20,6 +20,11 @@
             <inertia ixx="0.08" ixy="0.13" ixz="0.08" iyy="0.0" iyz="0.0" izz="0.0"/>
         </inertial>
     </link>
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0.0 0.0 0.12" rpy="0.0 0.0 0.0"/>
+        <parent link="base_footprint" />
+        <child link="base_link" />
+    </joint>
     <!--######################## LIDAR ########################-->
     <link name="lidar_link">
         <inertial>

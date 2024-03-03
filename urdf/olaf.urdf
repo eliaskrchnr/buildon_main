@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <robot name="olaf">
+
     <link name="base_link">
         <visual>
             <geometry>
