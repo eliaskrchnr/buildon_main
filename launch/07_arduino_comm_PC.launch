@@ -1,10 +1,16 @@
 <launch>
+
+    <param name="robot_description" command="cat $(find buildon_main)/urdf/olaf.urdf" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
     <node name="cmd_vel_twist_to_float" pkg="buildon_main" type="cmd_vel_twist_to_float.py"/>
     <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering"/>
-    <node name="vel_plot"
-        pkg="rqt_plot"
-        type="rqt_plot"
-        args="/right_wheel_vel/data /left_wheel_vel/data /cmd_vel_linear/data /cmd_vel" />
-    <arg name="rvizconfig" default="$(find buildon_main)/rviz/05_ydlidar_test.rviz" />
+    <node name="vel_plot" pkg="rqt_plot" type="rqt_plot" 
+    args="/right_wheel_vel/data /left_wheel_vel/data /cmd_vel_linear/data /cmd_vel /desired_left_wheel_vel /desired_right_wheel_vel" />
+    <node name="control_plot" pkg="rqt_plot" type="rqt_plot" 
+    args="/pub_control_part_p /pub_control_part_i /pub_control_part_d /pwm_left" />
+    <arg name="rvizconfig" default="$(find buildon_main)/rviz/urdf.rviz" />
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+    <node name="ticks_to_odom_node" pkg="buildon_main" type="diff_tf.py"/>
 </launch>

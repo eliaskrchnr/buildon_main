@@ -4,15 +4,15 @@
 
 void setup() {
   // LED Pins
-  pinMode(4, OUTPUT);
-  digitalWrite(4, HIGH);
-  pinMode(5, OUTPUT);
-  digitalWrite(5, HIGH);
+  pinMode(52, OUTPUT);
+  digitalWrite(52, HIGH);
+  
+  pinMode(50, OUTPUT);
+  digitalWrite(50, LOW);
 
   // setup ROS nodes
   nh.initNode();
 
-  
   nh.advertise(arduinoHeartbeat);
   nh.advertise(debug1);
   nh.advertise(debug2);
@@ -24,6 +24,12 @@ void setup() {
   nh.advertise(pub_pwm_left);
   nh.advertise(pub_ticks_left);
   nh.advertise(pub_ticks_right);
+
+  nh.advertise(pub_control_part_p);
+  nh.advertise(pub_control_part_i);
+  nh.advertise(pub_control_part_d);
+
+
   
   nh.subscribe(sub);
   nh.subscribe(cmd_vel_linear);
@@ -32,6 +38,9 @@ void setup() {
   nh.subscribe(Ki_value);
   nh.subscribe(Kd_value);
   nh.subscribe(set_control_loop_time);
+
+  nh.subscribe(setTn);
+  nh.subscribe(setTv);
 
 
   // setup left wheel pins
@@ -60,8 +69,9 @@ void setup() {
 
 void loop() {
 
-  if (millis() - loop_time_1 >= 1000) { //for debugging. sends message every second and lets led blink
+  if (millis() - loop_time_1 >= 1000) { //for debugging.
     loop_time_1 = millis();
+    digitalWrite(52, HIGH - digitalRead(52));
     n += 1;
     arduino_hearbeat_msg.data = n;
     arduinoHeartbeat.publish( &arduino_hearbeat_msg );
@@ -70,7 +80,6 @@ void loop() {
 
   if (millis() - last_loop_time > control_loop_time) {
     last_loop_time = millis();
-
     get_desired_tick_velocity(); // returns desired tick velocity of both wheels
     get_measured_tick_velocity(); // returns measured tick velocity of both wheels
     calc_pwm_output(); // calculates PWM output for both wheels based on PID control
@@ -90,16 +99,19 @@ void loop() {
   if (millis() - last_cmd_vel_time >= 1000) {
     analogWrite(Speed_l, 0); //Speed
     analogWrite(Speed_r, 0); //Speed
+    //Serial.println(millis() - last_cmd_vel_time);
     }
   else if (currently_right_wheel_forwards == desired_right_wheel_forwards && currently_left_wheel_forwards == desired_left_wheel_forwards) {
     send_pwm_signal();
     }
+    
   else if (measured_vel_ticks_right == 0 && measured_vel_ticks_left == 0) {
     currently_right_wheel_forwards = desired_right_wheel_forwards;
     currently_left_wheel_forwards = desired_left_wheel_forwards;
     
     digitalWrite(Direction_l, desired_left_wheel_forwards);
     digitalWrite(Direction_r, !desired_right_wheel_forwards);
+    
     send_pwm_signal();
     }
   else {
@@ -108,8 +120,6 @@ void loop() {
     }
     
   nh.spinOnce();
-  digitalWrite(4, currently_left_wheel_forwards);
-  digitalWrite(5, currently_right_wheel_forwards);
 }
 
 

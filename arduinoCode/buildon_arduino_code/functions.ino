@@ -36,14 +36,18 @@ void get_measured_tick_velocity() {
   float delta_pulseCount_r = pulseCount_r_now - pulseCount_r_last;
   float delta_pulseCount_l = pulseCount_l_now - pulseCount_l_last;
 
-
+  measuredVelRunningAverageLeft.addValue(delta_pulseCount_l * 1000 / delta_pulseTime);
+  measuredVelRunningAverageRight.addValue(delta_pulseCount_r * 1000 / delta_pulseTime);
+  measured_vel_ticks_right = measuredVelRunningAverageRight.getAverage();
+  measured_vel_ticks_left = measuredVelRunningAverageLeft.getAverage();
   // calc tick velocity
-  measured_vel_ticks_right = delta_pulseCount_r * 1000 / delta_pulseTime;
-  measured_vel_ticks_left = delta_pulseCount_l * 1000 / delta_pulseTime;
-/*
-  if (!currently_right_wheel_forwards) measured_vel_ticks_right = -1 * measured_vel_ticks_right;
-  if (!currently_left_wheel_forwards) measured_vel_ticks_left = -1 * measured_vel_ticks_left;*/
-  
+  /*
+    measured_vel_ticks_right = delta_pulseCount_r * 1000 / delta_pulseTime;
+    measured_vel_ticks_left = delta_pulseCount_l * 1000 / delta_pulseTime;*/
+  /*
+    if (!currently_right_wheel_forwards) measured_vel_ticks_right = -1 * measured_vel_ticks_right;
+    if (!currently_left_wheel_forwards) measured_vel_ticks_left = -1 * measured_vel_ticks_left;*/
+
   // sets values for next iteration
   pulseCount_r_last = pulseCount_r_now;
   pulseCount_l_last = pulseCount_l_now;
@@ -61,10 +65,10 @@ void publish_measured_velocity () {
 
   left_wheel_vel_msg. data = measured_vel_meters_left;
   left_wheel_vel.publish(&left_wheel_vel_msg);
-  
+
   desired_left_wheel_vel_msg.data = desired_vel_meters_left;
   desired_left_wheel_vel.publish(&desired_left_wheel_vel_msg);
-  
+
   desired_right_wheel_vel_msg.data = desired_vel_meters_right;
   desired_right_wheel_vel.publish(&desired_right_wheel_vel_msg);
 }
@@ -72,8 +76,7 @@ void publish_measured_velocity () {
 
 
 unsigned long pid_previous_time = 0;
-float i_error_left = 0;
-float i_error_right = 0;
+
 float last_p_error_left = 0;
 float last_p_error_right = 0;
 int pwm_left = 0;
@@ -83,15 +86,19 @@ int pwm_right = 0;
 void calc_pwm_output () {
   unsigned long current_time = millis();
   int elapsed_time = current_time - pid_previous_time;
-
+  pid_previous_time = current_time;
   // calculate P part
   int p_error_left = desired_vel_ticks_left - measured_vel_ticks_left;
   int p_error_right = desired_vel_ticks_right - measured_vel_ticks_right;
 
   // calculate I part
+  /*if (!currently_left_wheel_forwards) i_error_left += abs(elapsed_time * p_error_left);
+  else i_error_left += elapsed_time * p_error_left;*/
   i_error_left += elapsed_time * p_error_left;
+  /*if (!currently_right_wheel_forwards)i_error_right += abs(elapsed_time * p_error_right);
+  else i_error_right += elapsed_time * p_error_right;*/
   i_error_right += elapsed_time * p_error_right;
-
+  
   // calculate D part
   float d_error_left = (p_error_left - last_p_error_left) / elapsed_time;
   float d_error_right = (p_error_right - last_p_error_right) / elapsed_time;
@@ -102,26 +109,36 @@ void calc_pwm_output () {
 
   // calculate PWM output
 
+  pub_control_part_p_msg.data = Kp * p_error_left;
+  pub_control_part_p.publish(&pub_control_part_p_msg);
 
-  debug1_msg.data= desired_vel_ticks_left;
-  debug1.publish(&debug1_msg);
-  debug2_msg.data= measured_vel_ticks_left;
-  debug2.publish(&debug2_msg);
-  
-  pwm_left = Kp * p_error_left + Ki * i_error_left + Kd * d_error_left;  
+
+  pub_control_part_i_msg.data = Ki * i_error_left;
+  pub_control_part_i.publish(&pub_control_part_i_msg);
+
+
+  pub_control_part_d_msg.data = Kd * d_error_left;
+  pub_control_part_d.publish(&pub_control_part_d_msg);
+
+/*
+  if (!currently_right_wheel_forwards) pwm_left = Kp * p_error_left + Ki * i_error_left + Kd * d_error_left;
+
+  else pwm_left = Kp * p_error_left + Ki * i_error_left + Kd * d_error_left;*/
+
+  pwm_left = Kp * p_error_left + Ki * i_error_left + Kd * d_error_left;
   pwm_right = Kp * p_error_right + Ki * i_error_right + Kd * d_error_right;
 
-  
+
   if (pwm_right > 255) pwm_right = 255;
   if (pwm_right < 0 && !currently_right_wheel_forwards) pwm_right = - 1 * pwm_right;
   else if (pwm_right < 0) pwm_right = 0;
   pwm_right_msg.data = pwm_right;
   pub_pwm_right.publish(&pwm_right_msg);
 
-  
-  if (pwm_left > 255) pwm_left = 255;
   if (pwm_left < 0 && !currently_left_wheel_forwards) pwm_left = - 1 * pwm_left;
+  if (pwm_left > 255) pwm_left = 255;
   else if (pwm_left < 0) pwm_left = 0;
+
   pwm_left_msg.data = pwm_left;
   pub_pwm_left.publish(&pwm_left_msg);
 }
@@ -129,6 +146,8 @@ void calc_pwm_output () {
 
 void send_pwm_signal() {
   // set left PWM
+  //Serial.println(millis()/100);
+  digitalWrite(50, HIGH - digitalRead(50));
   analogWrite(Speed_l, pwm_left); //Speed
 
   // set right PWM
