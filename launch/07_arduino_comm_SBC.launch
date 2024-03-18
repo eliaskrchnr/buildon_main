@@ -1,5 +1,5 @@
 <launch>
     <param name="robot_description" command="cat $(find buildon_main)/urdf/olaf.urdf" />
-    <node name="rosserial_python" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0 _baud:=9600"/>
+    <node name="arduino_MCU" pkg="rosserial_python" type="serial_node.py" args="/dev/ttyACM0 _baud:=9600"/>
     <include file="$(find ydlidar_ros_driver)/launch/X4-Pro.launch" />
 </launch>

@@ -10,12 +10,8 @@ def callback(data):
     z = data.angular.z
     rospy.loginfo("Received Twist and converted to: Linear: %s" % x + " and Angular: %s" % z)
 
-
-
-    
     pub_linear.publish(x)
     pub_angular.publish(z)
-
 
 if __name__ == '__main__':
     rospy.init_node('convert_twist_to_int', anonymous=True)

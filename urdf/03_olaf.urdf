@@ -21,35 +21,7 @@
             <inertia ixx="0.06" ixy="0.06" ixz="0.09" iyy="0.0" iyz="0.0" izz="0.0"/>
         </inertial>
     </link>
-    <!--######################## LIDAR ########################-->
-    <link name="lidar_link">
-        <inertial>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <mass value="0.05"/>
-            <inertia ixx="5.15e-5" ixy="5.15e-5" ixz="6.15e-5" iyy="0.0" iyz="0.0" izz="0.0"/>
-        </inertial>
-        <visual name="">
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <geometry>
-                <cylinder radius="0.05" length="0.04"/>
-            </geometry>
-            <material name="">
-                <color rgba="1.0 0.0 0.0 1.0"/>
-                <texture filename=""/>
-            </material>
-        </visual>
-        <collision>
-            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
-            <geometry>
-                <cylinder radius="0.05" length="0.04"/>
-            </geometry>
-        </collision>
-    </link>
-    <joint name="rostopic" type="fixed">
-        <origin xyz="0.0 0.0 0.12" rpy="0.0 0.0 0.0"/>
-        <parent link="base_link"/>
-        <child link="lidar_link"/>
-    </joint>
+
     <!--######################## left wheel ########################-->
 
     <link name="left_wheel">
@@ -232,42 +204,5 @@
         <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
             <jointName>axis_joint, back_wheel_joint</jointName>
         </plugin>
-    </gazebo>
-
-    <gazebo reference="lidar_link">        <!-- LIDAR Quelle: https://classic.gazebosim.org/tutorials?tut=ros_gzplugins#Laser -->
-        <sensor name="lidar_sensor" type="ray">
-            <pose>0.0 0 0.0 0 0 0</pose>
-            <visualize>false</visualize>
-            <update_rate>40</update_rate>
-            <ray>
-                <scan>
-                    <horizontal>
-                        <samples>720</samples>
-                        <resolution>1.00000</resolution>
-                        <min_angle>0.000000</min_angle>
-                        <max_angle>6.280000</max_angle>
-                    </horizontal>
-                </scan>
-                <range>
-                    <min>0.120000</min>
-                    <max>12</max>
-                    <resolution>0.01000</resolution>
-                </range>
-                <noise>
-                    <type>gaussian</type>
-                    <!-- Noise parameters based on published spec for Hokuyo laser
-                        achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
-                        stddev of 0.01m will put 99.7% of samples within 0.03m of the true
-                        reading. -->
-
-                    <mean>0.0</mean>
-                    <stddev>0.01</stddev>
-                </noise>
-            </ray>
-            <plugin name="gazebo_ros_lidar_controller" filename="libgazebo_ros_laser.so">
-                <topicName>/scan</topicName>
-                <frameName>lidar_link</frameName>
-            </plugin>
-        </sensor>
     </gazebo>
 </robot>

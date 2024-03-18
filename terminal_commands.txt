@@ -1,1 +1,4 @@
- export ROS_MASTER_URI=http://elias-ThinkPad:11311
+export ROS_MASTER_URI=http://elias-ThinkPad:11311
+rosrun rosserial_python serial_node.py /dev/ttyACM0 _baud:=38400 _ns:=Arduino 
+ssh th_koeln@192.168.178.62
+roslaunch buildon_main 07_arduino_comm_PC.launch
